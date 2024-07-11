@@ -1,0 +1,28 @@
+
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .bg-primary {
+    background-color: #055ad8;
+  }
+  
+  .bg-secondary {
+    background-color: #065ad8;
+  }
+  
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+@media (max-width: 768px) {
+    .left, .right {
+        width: 100%;
+    }
+    .flex {
+        flexDirection: 'column';
+    }
+}
