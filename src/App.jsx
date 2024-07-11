@@ -10,7 +10,6 @@ import {
 import './App.css';
 import '@mantine/core/styles.css';
 
-import ApartmentDashboard from './pages/ApartmentDashboard/ApartmentDashboard';
 import './index.css';
 import ResetPassword from './pages/ResetPassword/resetPassword';
 import { MantineProvider } from '@mantine/core';
@@ -22,6 +21,7 @@ import HomePage from './pages/Home/HomePage';
 import Register from './pages/Register/Register';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import EditProfilePage from './pages/EditProfile/EditProfilePage';
+import ApartmentDashboard from './pages/ApartmentDashboard/ApartmentDashboard';
 function App() {
 
   return (
@@ -33,7 +33,7 @@ function App() {
               <Route path='/apartment/:id' element={<ApartmentPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="home" element={<HomePage />} />
-              <Route path="/searchApartment" element={<ApartmentDashboard />} />
+              <Route path="/dashboard" element={<ApartmentDashboard />} />
               <Route path='/register' element={<Register />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path='/server-down' element={<ServerError />} />

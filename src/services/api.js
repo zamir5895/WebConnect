@@ -249,6 +249,19 @@ export const updateProfile = async (token, updateData) => {
     throw error;
   }
 };
+export const crearPublicacionAlojamiento = async (publicacionAlojamientoDTO) => {
+  try {
+    const response = await axios.post('/publicacionAlojamiento', publicacionAlojamientoDTO, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `${localStorage.getItem('token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const getAllChats = async (token) => {
   const response = await axios.get(`${API_URL}/chat/user`, {
