@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getAllPosts } from '../../services/api';
+import Post from './Post';
 
 const ScrollablePosts = () => {
   const [posts, setPosts] = useState([]);
@@ -30,24 +31,21 @@ const ScrollablePosts = () => {
     }
   };
 
+  const handleScroll = (e) => {
+    const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+    if (bottom && hasMore && !loading) {
+      loadMore();
+    }
+  };
+
   return (
-    <div className="w-full lg:w-3/4 overflow-auto" onScroll={(e) => {
-      if (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight && hasMore && !loading) {
-        loadMore();
-      }
-    }}>
+    <div className="flex flex-col items-center w-full lg:w-3/4 h-full p-4 overflow-y-auto" onScroll={handleScroll}>
       {posts.map((post) => (
-        <div key={post.id} className="bg-white shadow-md rounded-lg p-5 mb-5">
-          <h3 className="text-xl font-bold">{post.contenido}</h3>
-          <p>{post.username}</p>
-          <p>{new Date(post.fechaPublicacion).toLocaleString()}</p>
-          {/* Renderiza otros detalles del post aquí */}
-        </div>
+        <Post key={post.id} post={post} />
       ))}
-      {loading && <p>Cargando más publicaciones...</p>}
+      {loading && <p className="text-center text-gray-500">Cargando más publicaciones...</p>}
     </div>
   );
 };
 
 export default ScrollablePosts;
- 

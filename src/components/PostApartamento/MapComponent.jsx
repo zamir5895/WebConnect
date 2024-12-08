@@ -5,7 +5,8 @@ const loadScript = (url, callback) => {
   if (!existingScript) {
     const script = document.createElement('script');
     script.src = url;
-    script.async = true;
+    script.async = true; // Carga asíncrona
+    script.defer = true; // Deferir la carga
     script.onload = callback;
     document.body.appendChild(script);
   } else if (existingScript && callback) {
@@ -13,21 +14,23 @@ const loadScript = (url, callback) => {
   }
 };
 
-const MapComponent = ({ setLatitude, setLongitude, setUbicacion }) => {
+const MapComponent = ({ setLatitude, setLongitude }) => {
   const [localLatLng, setLocalLatLng] = useState({ lat: null, lng: null });
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
 
   useEffect(() => {
-    const googleMapsApiUrl = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBjprc31jsXrCivv3ck5VdI6XLRF4zKyBU&libraries=places`;
-    loadScript(googleMapsApiUrl, () => {
-      if (window.google) {
-        initMap();
-      }
-    });
+    window.initMap = initMap;
+    const googleMapsApiUrl = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBjprc31jsXrCivv3ck5VdI6XLRF4zKyBU&libraries=places&callback=initMap`;
+    loadScript(googleMapsApiUrl);
   }, []);
 
   const initMap = () => {
+    if (!window.google) {
+      console.error('Google Maps JavaScript API not loaded');
+      return;
+    }
+
     const initialLatLng = { lat: -34.397, lng: 150.644 };
     const map = new window.google.maps.Map(document.getElementById('map'), {
       center: initialLatLng,
@@ -52,15 +55,6 @@ const MapComponent = ({ setLatitude, setLongitude, setUbicacion }) => {
     map.panTo(latLng);
     setLocalLatLng({ lat: latLng.lat(), lng: latLng.lng() });
     setMarker(newMarker);
-
-    const geocoder = new window.google.maps.Geocoder();
-    geocoder.geocode({ location: latLng }, (results, status) => {
-      if (status === 'OK' && results[0]) {
-        setUbicacion(results[0].formatted_address);
-      } else {
-        console.error('Geocoder failed due to: ' + status);
-      }
-    });
   };
 
   const handleSave = () => {
@@ -71,7 +65,7 @@ const MapComponent = ({ setLatitude, setLongitude, setUbicacion }) => {
   };
 
   return (
-    <div className="flex flex-col items-center p-4 bg-white rounded-lg shadow-md">
+    <div className="flex flex-col items-center p-4 bg-white rounded-lg shadow-md mt-6">
       <div id="map" className="w-full h-96 mb-4 rounded-lg shadow-lg"></div>
       <button
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300"

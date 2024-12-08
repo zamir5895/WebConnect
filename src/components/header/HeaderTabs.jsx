@@ -42,11 +42,13 @@ const HeaderTabs = () => {
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
-                const token = localStorage.getItem('token'); // Obtener el token del almacenamiento local
+                const token = localStorage.getItem('token'); 
                 if (token) {
                     const data = await getCurrentUser(token);
                     setUserProfile(data);
-                    console.log(data);
+                    console.log("token", token);
+                    console.log("User Profile", data);
+
                 }
             } catch (error) {
                 console.error("Error al obtener la información del usuario", error);
@@ -58,10 +60,10 @@ const HeaderTabs = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('token');
-        window.location.href = '/login'; // Redirige a la página de inicio de sesión
+        window.location.href = '/login'; 
     };
 
-    const isLoggedIn = !!localStorage.getItem('token'); // Verifica si el token está presente
+    const isLoggedIn = !!localStorage.getItem('token'); 
 
     return (
         <Menu
@@ -104,7 +106,7 @@ const HeaderTabs = () => {
                     Home
                 </Menu.Item>
                 <Menu.Item
-                    onClick={() => navigation('/searchApartment')}
+                    onClick={() => navigation('/alojamientos')}
                     leftSection={
                         <IconStar
                             style={{ width: rem(16), height: rem(16) }}

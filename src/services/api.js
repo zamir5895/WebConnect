@@ -23,13 +23,14 @@ export const checkApiStatus = async () => {
 
 export const registerUser = async (userData) => {
   try {
-    const response = await axios.post('/auth/register', userData , {
-    headers: {
-      'Content-Type': 'application/json'
-  }
-});
-return response.data;
+    const response = await axios.post(`/auth/register`, userData, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
   } catch (error) {
+    console.error('Error en el registro de usuario:', error);
     throw error;
   }
 };
@@ -106,7 +107,6 @@ export const addPosts = async (postData) => {
     const response = await axios.post('/publicacionInicio', postData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-
       },
     });
     return response.data;
@@ -114,7 +114,6 @@ export const addPosts = async (postData) => {
     throw error;
   }
 };
-
 export const getAllPosts = async (page, size) => {
   try {
     const response = await axios.get(`/publicacionInicio?page=${page}&size=${size}`);
@@ -133,7 +132,7 @@ export const getLikesByPublicacion = async (publicacionId) => {
   }
 };
 
-export const addLike = async (publicacionId, userId) => {
+export const postLike = async (publicacionId, userId) => {
   try {
     await axios.post(`/likes/${publicacionId}/${userId}`);
   } catch (error) {
@@ -141,7 +140,7 @@ export const addLike = async (publicacionId, userId) => {
   }
 };
 
-export const removeLike = async (publicacionId, userId) => {
+export const deleteLike = async (publicacionId, userId) => {
   try {
     await axios.delete(`/likes/${publicacionId}/${userId}`);
   } catch (error) {
@@ -249,12 +248,11 @@ export const updateProfile = async (token, updateData) => {
     throw error;
   }
 };
-export const crearPublicacionAlojamiento = async (publicacionAlojamientoDTO) => {
+export const crearPublicacionAlojamiento = async (formData) => {
   try {
-    const response = await axios.post('/publicacionAlojamiento', publicacionAlojamientoDTO, {
+    const response = await axios.post('/publicacionAlojamiento', formData, {
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `${localStorage.getItem('token')}`
+        'Content-Type': 'multipart/form-data',
       }
     });
     return response.data;
@@ -263,51 +261,186 @@ export const crearPublicacionAlojamiento = async (publicacionAlojamientoDTO) => 
   }
 };
 
-export const getAllChats = async (token) => {
-  const response = await axios.get(`${API_URL}/chat/user`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-};
-
-export const getChatMessages = async (chatId, page, size, token) => {
-  const response = await axios.get(`${API_URL}/messages/${chatId}/mensajes`, {
-    headers: { Authorization: `Bearer ${token}` },
-    params: { page, size }
-  });
-  return response.data;
-};
-
-export const sendMessage = async (message, token) => {
-  const response = await axios.post(`${API_URL}/messages/create`, message, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-};
-
-export const fetchChats = async () => {
-  try {
-    const response = await axios.get('/api/chat/user', {
-      headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }
+export const getMisPublicaciones = async(propietarioId, page = 0, size = 10) => {
+  try{
+    const response =await axios.get(`/publicacionAlojamiento/mispublicaciones/${propietarioId}`, {
+      params: { page, size }
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching chats:', error);
+    console.error('Error obteniendo publicaciones', error);
+    throw error;
+  }
+};
+export const getAllAlojamientos = async (page, size) => {
+  try {
+    const response = await axios.get(`/publicacionAlojamiento?page=${page}&size=${size}`);
+    return response.data;
+  } catch (error) {
+    throw (error);
+  }
+}
+
+export const updateTitle = async (publicacionId, title) => {
+  try {
+    await axios.patch(`/publicacionAlojamiento/${publicacionId}/actualizar`, title, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  } catch (error) {
     throw error;
   }
 };
 
-export const fetchMessages = async (chatId) => {
+export const updateDescription = async (alojamientoId, descripcion) => {
   try {
-    const response = await axios.get(`/api/messages/${chatId}/mensajes`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
-      params: { page: 0, size: 20 }
+    await axios.patch(`/alojamiento/alojamientos/descripcion/${alojamientoId}`, { descripcion }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
-    return response.data.content;
   } catch (error) {
-    console.error('Error fetching messages:', error);
     throw error;
   }
 };
+
+
+export const updateEstado = async (alojamientoId, estado) => {
+  try {
+    await axios.patch(`/alojamiento/disponibilidad/${alojamientoId}`, { estado });
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+export const updateImage = async (alojamientoId, imagenId, imagen) => {
+  try {
+    const formData = new FormData();
+    formData.append('file', imagen);
+
+    await axios.patch(`/alojamiento/imagen/${alojamientoId}/${imagenId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+export const updatePrice = async (alojamientoId, priceDTO) => {
+  try {
+    await axios.patch(`/alojamiento/alojamientos/${alojamientoId}`, priceDTO, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+export const updateUbicacion = async (alojamientoId, ubicacionDTO) => {
+  try {
+    await axios.patch(`/alojamiento/alojamientos/ubicacion/${alojamientoId}`, ubicacionDTO, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteImage = async (alojamientoId, imagenId) => {
+  try {
+    await axios.delete(`/alojamiento/imagen/${alojamientoId}/${imagenId}`);
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+
+export const deletePublicacion = async (publicacionId) => {
+  try {
+    await axios.delete(`/publicacionAlojamiento/${publicacionId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getAlojamiento = async (alojamientoId) => {
+  try {
+    const response = await axios.get(`/alojamiento/${alojamientoId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const buscarPublicaciones = async (keyword) => {
+  try {
+    const response = await axios.get(`/publicacionAlojamiento/buscar`, {
+      params: { keyword },
+    });
+    return response.data;
+    console.log('Respuesta de la API:', response.data); 
+
+  } catch (error) {
+    console.error('Error al buscar publicaciones:', error);
+    throw error;
+  }
+};
+
+export const getAlojamientoDetails = async (publicacionId) => {
+  try {
+    const response = await axios.get(`/publicacionAlojamiento/${publicacionId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createReview = async (reviewData) => {
+  try {
+    const response = await axios.post('/review', reviewData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error('Failed to create review');
+  }
+};
+
+export const getReviewsByPublicacionId = async (publicacionId, page, size) => {
+  try {
+    const response = await axios.get(`/review/${publicacionId}?page=${page}&size=${size}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error('Failed to fetch reviews');
+  }
+};
+
+
+export const deleteReview = async (reviewId) => {
+  await axios.delete(`/review/${reviewId}`);
+};
+
+
 
 export default axios;
